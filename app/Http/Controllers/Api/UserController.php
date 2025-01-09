@@ -27,9 +27,9 @@ class UserController extends BaseController
 	{
 		$notification = Auth::user()->unreadNotifications;
 		$notificationold = Auth::user()->readNotifications;
-		$unread = count(Auth::user()->unreadNotifications); 
-		$read = count(Auth::user()->readNotifications); 
-		// return $notification[0]->data['title']; 
+		$unread = count(Auth::user()->unreadNotifications);
+		$read = count(Auth::user()->readNotifications);
+		// return $notification[0]->data['title'];
 		$data = null;
 		if($notification)
 		{
@@ -45,7 +45,7 @@ class UserController extends BaseController
 				// $data[] = $row->data;
 			}
 		}
-			
+
 		$olddata = null;
 		if($notificationold){
 
@@ -62,8 +62,8 @@ class UserController extends BaseController
 		}
 		return response()->json(['success'=>true,'unread'=> $unread,'read'=> $read,'notification' => $data]);
 	}
-	
-	
+
+
 	public function read_notification(Request $request)
 	{
 		try{
@@ -106,44 +106,34 @@ class UserController extends BaseController
 		// return Auth::user();
         try{
 			$olduser = User::where('id',Auth::user()->id)->first();
-			$validator = Validator::make($request->all(),[
-				'first_name' =>'string',
-				'last_name' =>'string',
-				'email' => 'email|unique:users,email,'.$olduser->id,
-				'phone' =>'numeric',
-				'photo' => 'image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048',
-			]);
+			$validator = Validator::make($request->all(), [
+                // 'device_token' => 'required',
+                'full_name' => 'required|string',
+                // 'last_name' => 'required|string',
+                'email' => 'required|email|unique:users',
+                'phone' => 'required|numeric',
+                'password' => 'required|min:8',
+                'confirm_password' => 'required|same:password',
+                // 'role' => 'required|string',
+                'photo' => 'image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048',
+            ]);
 			if($validator->fails())
 			{
 				return $this->sendError($validator->errors()->first());
-	
+
 			}
 			$profile = $olduser->photo;
-			
-			if($request->hasFile('photo')) 
+
+			if($request->hasFile('photo'))
 			{
 				$file = request()->file('photo');
 				$fileName = md5($file->getClientOriginalName() . time()) . "PayMefirst." . $file->getClientOriginalExtension();
-				$file->move('uploads/user/profiles/', $fileName);  
+				$file->move('uploads/user/profiles/', $fileName);
 				$profile = asset('uploads/user/profiles/'.$fileName);
 			}
 
-			if($request->language){    
-				$olduser->language = json_encode($request->language);
-			}
-			if($request->expertise){    
-				$olduser->expertise = json_encode($request->expertise);
-			}
-			$olduser->first_name = $request->first_name;
-			$olduser->last_name = $request->last_name;
-			$olduser->email = $request->email;
+			$olduser->full_name = $request->full_name;
 			$olduser->phone = $request->phone;
-			$olduser->zip = $request->zip;
-			$olduser->state = $request->state;
-			$olduser->city = $request->city;
-			$olduser->state = $request->state;
-			$olduser->address = $request->address;
-			$olduser->company_name = $request->company_name;
 			$olduser->photo = $profile;
 			$olduser->save();
 
@@ -155,8 +145,8 @@ class UserController extends BaseController
 		catch(\Eception $e)
 		{
 			return $this->sendError($e->getMessage());
-		}        
-   
+		}
+
     }
 
 	public function review(Request $request)
@@ -191,11 +181,11 @@ class UserController extends BaseController
 				'rating' => $request->rating,
 				'text' => $request->text,
 			]);
-			
+
 			$quote->status = 'review';
 			$quote->save();
 
-			
+
 
 			return response()->json(['success'=>true,'message'=>'Review Created Successfully','review'=>$review]);
 
@@ -221,7 +211,7 @@ class UserController extends BaseController
 			return $this->sendError($e->getMessage());
 		}
 	}
-	
+
 	public function status_update(Request $request)
 	{
 		$user = User::find(Auth::user()->id);
@@ -234,21 +224,21 @@ class UserController extends BaseController
                         $avg = Review::where('assign_user_id', $users->id)->avg('rating');
                         $users->total_earning = $users->sum_negotiator()->sum("negotiator_amount");
                         $users->current_month_earning = $users->current_month_earning()->sum("negotiator_amount");
-		
+
 		return response()->json(['success'=>true,'message'=>'Status Update Successfully','user'=>$users,'average_rating'=>$avg]);
 
 	}
-	
+
 	public function negotiator_photo_update(Request $request)
 	{
 		$user = User::find(Auth::user()->id);
 
 		$profile = $user->photo;
-		if($request->hasFile('photo')) 
+		if($request->hasFile('photo'))
 		{
 			$file = request()->file('photo');
 			$fileName = md5($file->getClientOriginalName() . time()) . $file->getClientOriginalExtension();
-			$file->move('uploads/user/profiles/', $fileName);  
+			$file->move('uploads/user/profiles/', $fileName);
 			$profile = asset('uploads/user/profiles/'.$fileName);
 		}
 
@@ -256,21 +246,21 @@ class UserController extends BaseController
 			'photo' => $profile,
 		]);
 		$users = User::find(Auth::user()->id);
-		
+
 		return response()->json(['success'=>true,'message'=>'Profile Photo Update Successfully','user'=>$users]);
 
 	}
-	
+
 	public function negotiator_coverphoto_update(Request $request)
 	{
 		$user = User::find(Auth::user()->id);
 
 		// $profile = $user->photo;
-		if($request->hasFile('coverphoto')) 
+		if($request->hasFile('coverphoto'))
 		{
 			$file = request()->file('coverphoto');
 			$fileName = md5($file->getClientOriginalName() . time()) . $file->getClientOriginalExtension();
-			$file->move('uploads/user/profiles/', $fileName);  
+			$file->move('uploads/user/profiles/', $fileName);
 			$profile = asset('uploads/user/profiles/'.$fileName);
 		}
 
@@ -278,7 +268,7 @@ class UserController extends BaseController
 			'coverphoto' => $profile,
 		]);
 		$users = User::find(Auth::user()->id);
-		
+
 		return response()->json(['success'=>true,'message'=>'Profile Cover Photo Update Successfully','user'=>$users]);
 
 	}
@@ -291,10 +281,10 @@ class UserController extends BaseController
 			$language = $user->language;
 			$expertise = $user->expertise;
 
-			if($request->language){    
+			if($request->language){
 				$language = json_encode($request->language);
 			}
-			if($request->expertise){    
+			if($request->expertise){
 				$expertise = json_encode($request->expertise);
 			}
 
@@ -311,7 +301,7 @@ class UserController extends BaseController
 				'expertise' => $expertise,
 			]);
 			$users = User::find(Auth::user()->id);
-			
+
 			return response()->json(['success'=>true,'message'=>'Profile Update Successfully','user'=>$users]);
 		}
 		catch(\Exception $e)
@@ -353,12 +343,12 @@ class UserController extends BaseController
 			return $this->sendError($e->getMessage());
 		}
 	}
-	
+
 	public function support_list(Request $request)
 	{
 		try
 		{
-			
+
 			$review = Support::get();
 
 			return response()->json(['success'=>true,'message'=>'Support Lists','review'=>$review]);
@@ -375,7 +365,7 @@ class UserController extends BaseController
 		try{
 		//$user= User::findOrFail(Auth::id());
 		$user = User::with(['child','goal','temporary_wallet','wallet','payments'])->where('id',Auth::user()->id)->first();
-		
+
 		$amount = 100;
 		$charge = \Stripe\Charge::create([
 			'amount' => $amount,
@@ -383,7 +373,7 @@ class UserController extends BaseController
 			'customer' => $user->stripe_id,
 		]);
 		if($request->current_plan == 'basic')
-		{		
+		{
 			$user->update(['current_plan' =>"premium",'card_change_limit'=>'1','created_plan'=> \Carbon\Carbon::now()]);
 			return response()->json(['success'=>true,'message'=>'Current Plan Updated Successfully','user_info'=>$user,'payment' => $charge]);
 
@@ -391,7 +381,7 @@ class UserController extends BaseController
 		elseif($request->current_plan == 'premium')
 		{
 			$user->update(['current_plan' =>"basic",'card_change_limit'=>'0','created_plan'=> \Carbon\Carbon::now()]);
-		
+
 		 return response()->json(['success'=>true,'message'=>'Current Plan Updated Successfully','user_info'=>$user]);
 		}
 		else
@@ -403,8 +393,8 @@ class UserController extends BaseController
 	  return $this->sendError($e->getMessage());
 
 		}
-		
+
 	}
 
-    
+
 }
