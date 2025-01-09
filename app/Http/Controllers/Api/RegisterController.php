@@ -84,7 +84,7 @@ class RegisterController extends BaseController
 
 
 //        Mail::to($user->email)->send(new SendVerifyCode($input['email_code']));
-        $token =  $user->createToken('qbidapi')->plainTextToken;
+        $token =  $user->createToken('tahafuzapp')->plainTextToken;
 		$users = User::where('id',$user->id)->first();
 		return response()->json(['success'=>true,'message'=>'User register successfully' ,'token'=>$token,'user_info'=>$users]);
     }
