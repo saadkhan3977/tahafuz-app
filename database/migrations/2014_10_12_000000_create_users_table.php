@@ -15,21 +15,19 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
-            $table->string('company_name')->nullable();
+            $table->string('full_name')->nullable();
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('email_code')->nullable();
             $table->string('password');
-            $table->string('address')->nullable();
-            $table->string('city')->nullable();
-            $table->string('state')->nullable();
-            $table->string('zip')->nullable();
+            // $table->string('address')->nullable();
+            // $table->string('city')->nullable();
+            // $table->string('state')->nullable();
+            // $table->string('zip')->nullable();
             $table->string('photo')->nullable();
             $table->longtext('device_token')->nullable();
-            $table->enum('role',['Business Qbidder','Qbid Negotiator','Qbid Member','admin'])->default('Qbid Member');
+            $table->enum('role',['user','admin'])->default('user');
             $table->enum('status',['active','inactive'])->default('active');
             $table->rememberToken();
             $table->timestamps();
