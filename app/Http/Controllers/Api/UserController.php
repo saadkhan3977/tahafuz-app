@@ -110,10 +110,10 @@ class UserController extends BaseController
                 // 'device_token' => 'required',
                 'full_name' => 'required|string',
                 // 'last_name' => 'required|string',
-                'email' => 'required|email|unique:users',
+                // 'email' => 'required|email|unique:users',
                 'phone' => 'required|numeric',
-                'password' => 'required|min:8',
-                'confirm_password' => 'required|same:password',
+                // 'password' => 'required|min:8',
+                // 'confirm_password' => 'required|same:password',
                 // 'role' => 'required|string',
                 'photo' => 'image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048',
             ]);
