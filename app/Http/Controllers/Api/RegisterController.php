@@ -29,21 +29,21 @@ class RegisterController extends BaseController
 {
     public function register(Request $request)
     {
-		// $validator = Validator::make($request->all(), [
-        //     // 'device_token' => 'required',
-        //     'full_name' => 'required|string',
-        //     // 'last_name' => 'required|string',
-        //     'email' => 'required|email|unique:users',
-        //     'phone' => 'required|numeric',
-        //     'password' => 'required|min:8',
-        //     'confirm_password' => 'required|same:password',
-        //     // 'role' => 'required|string',
-		// 	'photo' => 'image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048',
-        // ]);
-        // if($validator->fails())
-        // {
-		//     return $this->sendError($validator->errors()->first());
-        // }
+		$validator = Validator::make($request->all(), [
+            // 'device_token' => 'required',
+            'full_name' => 'required|string',
+            // 'last_name' => 'required|string',
+            'email' => 'required|email|unique:users',
+            'phone' => 'required|numeric',
+            'password' => 'required|min:8',
+            'confirm_password' => 'required|same:password',
+            // 'role' => 'required|string',
+			'photo' => 'image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048',
+        ]);
+        if($validator->fails())
+        {
+		    return $this->sendError($validator->errors()->first());
+        }
         // if($request->role == 'Business Qbidder')
         // {
         //     $validator = Validator::make($request->all(), [
