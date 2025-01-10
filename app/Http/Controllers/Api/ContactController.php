@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ContactInfo;
 use App\Models\Contact;
+use Auth;
 use App\Models\AdminInfo;
 use Validator;
 class ContactController extends BaseController
@@ -51,7 +52,7 @@ class ContactController extends BaseController
     // List all contacts
     public function index()
     {
-        $contacts = Contact::all();
+        $contacts = Contact::where('user_id',Auth::id())->get();
 
         // return response()->json($contacts, 200);
         return response()->json(['success'=>true,'contacts_list'=>$contacts],200);
@@ -81,6 +82,7 @@ class ContactController extends BaseController
 
         // Save each contact and push to $savedContacts
         foreach ($request->contacts as $contactData) {
+            $contactData['user_id'] = Auth::id();
             $contact = Contact::create($contactData);
             $savedContacts[] = $contact; // Append saved contact to the array
         }
