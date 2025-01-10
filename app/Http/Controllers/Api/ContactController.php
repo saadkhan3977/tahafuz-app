@@ -79,7 +79,7 @@ class ContactController extends BaseController
 
         return response()->json([
             'message' => 'Contact created successfully',
-            'data' => $contacts
+            'data' => $request->contacts
         ], 201);
     }
 
