@@ -128,5 +128,7 @@ Route::group(['middleware' => ['api','auth:api'], 'prefix' => 'auth'], function 
     Route::post('financial/breakdowns/post', [\App\Http\Controllers\Api\FinancialController::class, 'financialpost']);
     Route::get('admin/info', [\App\Http\Controllers\Api\ContactController::class, 'admininfo']);
     Route::post('contact/submit', [\App\Http\Controllers\Api\ContactController::class, 'contact_info']);
+    Route::get('contact', [\App\Http\Controllers\Api\ContactController::class, 'index']);
+    Route::post('contact', [\App\Http\Controllers\Api\ContactController::class, 'store']);
     Route::get('logout', [\App\Http\Controllers\Api\RegisterController::class, 'logout']);
 });
