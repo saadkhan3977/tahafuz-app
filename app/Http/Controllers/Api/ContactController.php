@@ -69,17 +69,25 @@ class ContactController extends BaseController
             return $this->sendError($validator->errors()->first());
         }
 
-        $contacts = Contact::insert(
-            array_map(function ($contact) {
-                $contact['created_at'] = now();
-                $contact['updated_at'] = now();
-                return $contact;
-            }, $request->contacts)
-        );
+        // $contacts = Contact::insert(
+        //     array_map(function ($contact) {
+        //         $contact['created_at'] = now();
+        //         $contact['updated_at'] = now();
+        //         return $contact;
+        //     }, $request->contacts)
+        // );
+
+        $savedContacts = []; // Array to store saved contacts
+
+        // Save each contact and push to $savedContacts
+        foreach ($request->contacts as $contactData) {
+            $contact = Contact::create($contactData);
+            $savedContacts[] = $contact; // Append saved contact to the array
+        }
 
         return response()->json([
             'message' => 'Contact created successfully',
-            'data' => $request->contacts
+            'data' => $savedContacts
         ], 201);
     }
 
