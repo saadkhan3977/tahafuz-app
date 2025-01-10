@@ -59,8 +59,9 @@ class ContactController extends BaseController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'number' => 'required|string|max:15',
+            'contacts' => 'required|array', // Ensure 'contacts' is an array
+            'contacts.*.name' => 'required|string|max:255',
+            'contacts.*.number' => 'required|string|max:15',
         ]);
 
         if($validator->fails())
@@ -68,11 +69,17 @@ class ContactController extends BaseController
             return $this->sendError($validator->errors()->first());
         }
 
-        $contact = Contact::create($request->all());
+        $contacts = Contact::insert(
+            array_map(function ($contact) {
+                $contact['created_at'] = now();
+                $contact['updated_at'] = now();
+                return $contact;
+            }, $request->contacts)
+        );
 
         return response()->json([
             'message' => 'Contact created successfully',
-            'data' => $contact
+            'data' => $contacts
         ], 201);
     }
 
